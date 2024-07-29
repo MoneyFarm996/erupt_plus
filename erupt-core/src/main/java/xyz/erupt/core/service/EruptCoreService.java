@@ -23,6 +23,7 @@ import xyz.erupt.core.util.ReflectUtil;
 import xyz.erupt.core.view.EruptFieldModel;
 import xyz.erupt.core.view.EruptModel;
 
+import java.lang.reflect.Field;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -97,15 +98,28 @@ public class EruptCoreService implements ApplicationRunner {
         // erupt field data to memory
         eruptModel.setEruptFieldModels(new ArrayList<>());
         eruptModel.setEruptFieldMap(new LinkedCaseInsensitiveMap<>());
-        ReflectUtil.findClassAllFields(clazz, field -> Optional.ofNullable(field.getAnnotation(EruptField.class))
-                .ifPresent(ignore -> {
-                    EruptFieldModel eruptFieldModel = new EruptFieldModel(field);
-                    eruptModel.getEruptFieldModels().add(eruptFieldModel);
-                    if (!eruptModel.getEruptFieldMap().containsKey(field.getName())) {
-                        eruptModel.getEruptFieldMap().put(field.getName(), eruptFieldModel);
-                    }
-                })
-        );
+        List<Field> fields = ReflectUtil.findClassAllFields(clazz);
+        fields.forEach(field -> {
+            Optional.ofNullable(field.getAnnotation(EruptField.class))
+                    .ifPresent(ignore -> {
+                        EruptFieldModel eruptFieldModel = new EruptFieldModel(field);
+                        eruptModel.getEruptFieldModels().add(eruptFieldModel);
+                        if (!eruptModel.getEruptFieldMap().containsKey(field.getName())) {
+                            eruptModel.getEruptFieldMap().put(field.getName(), eruptFieldModel);
+                        }
+                    });
+        });
+
+//        ReflectUtil.findClassAllFields(clazz, field -> Optional.ofNullable(field.getAnnotation(EruptField.class))
+//                .ifPresent(ignore -> {
+//                    EruptFieldModel eruptFieldModel = new EruptFieldModel(field);
+//                    eruptModel.getEruptFieldModels().add(eruptFieldModel);
+//                    if (!eruptModel.getEruptFieldMap().containsKey(field.getName())) {
+//                        eruptModel.getEruptFieldMap().put(field.getName(), eruptFieldModel);
+//                    }
+//                })
+//        );
+
         eruptModel.getEruptFieldModels().sort(Comparator.comparingInt((a) -> a.getEruptField().sort()));
         // erupt annotation validate
         EruptAnnotationException.validateEruptInfo(eruptModel);

@@ -18,7 +18,7 @@ import xyz.erupt.annotation.sub_field.sub_edit.Search;
 import xyz.erupt.flow.bean.entity.node.OaProcessNode;
 import xyz.erupt.flow.service.impl.ProcessDefinitionServiceImpl;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.Date;
 
 /**

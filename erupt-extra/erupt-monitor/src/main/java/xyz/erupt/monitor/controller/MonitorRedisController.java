@@ -8,7 +8,7 @@ import xyz.erupt.core.annotation.EruptRouter;
 import xyz.erupt.monitor.constant.MonitorConstant;
 import xyz.erupt.monitor.vo.redis.RedisInfo;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.util.Objects;
 
 /**

@@ -49,7 +49,7 @@ public class ReflectUtil {
         return obj;
     }
 
-    public static void findClassAllFields(Class<?> clazz, Consumer<Field> fieldConsumer) {
+    private static void findClassAllFields(Class<?> clazz, Consumer<Field> fieldConsumer) {
         Class<?> tempClass = clazz;
         while (null != tempClass) {
             for (Field field : tempClass.getDeclaredFields()) {
@@ -62,6 +62,17 @@ public class ReflectUtil {
             tempClass = tempClass.getSuperclass();
         }
     }
+
+    public static List<Field> findClassAllFields(Class<?> clazz) {
+        List<Field> fields = new ArrayList<>();
+        findClassAllFields(clazz, field -> {
+            if (fields.stream().noneMatch(f -> f.getName().equals(field.getName()))) {
+                fields.add(field);
+            }
+        });
+        return fields;
+    }
+
 
     //获取继承列表
     public static List<Class<?>> findClassExtendStack(Class<?> clazz) {

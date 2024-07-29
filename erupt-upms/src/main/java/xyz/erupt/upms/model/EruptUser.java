@@ -23,7 +23,7 @@ import xyz.erupt.upms.model.filter.EruptMenuViewFilter;
 import xyz.erupt.upms.model.input.ResetPassword;
 import xyz.erupt.upms.model.input.ResetPasswordExec;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.Date;
 import java.util.Set;
 

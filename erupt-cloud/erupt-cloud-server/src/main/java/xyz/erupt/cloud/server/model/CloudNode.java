@@ -25,7 +25,7 @@ import xyz.erupt.cloud.server.base.CloudServerConst;
 import xyz.erupt.jpa.model.MetaModelUpdateVo;
 import xyz.erupt.upms.handler.ViaMenuValueCtrl;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 /**
  * @author YuePeng
@@ -118,7 +118,7 @@ public class CloudNode extends MetaModelUpdateVo {
     private String duty;
 
     @Lob
-    @Type(type = "org.hibernate.type.TextType")
+    @Column(columnDefinition = "longtext")
     @EruptField(
             views = @View(title = "节点配置"),
             edit = @Edit(title = "节点配置", desc = "配置后可在子节点中读取", type = EditType.CODE_EDITOR, codeEditType = @CodeEditorType(language = "json"))

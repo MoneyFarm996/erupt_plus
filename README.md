@@ -1,5 +1,12 @@
 中文 &nbsp; | &nbsp; [English](./README-EN.md)  
 
+```
+将原有Erupt项目升级到Spring Boot 3.3.2版本，JDK升级到17,并支持GraalVM编译,提升项目性能70%以上
+```
+
+```xml
+```
+
 <p align="center"><img src="./erupt-web/src/main/resources/public/erupt.svg" height="150" alt="logo"/></p>
 <h1 align="center"> Erupt Framework &nbsp; 🚀 &nbsp; 通用配置管理框架 </h1>
 <h3 align="center">零前端代码，急速开发通用管理系统</h3>

@@ -10,8 +10,8 @@ import xyz.erupt.job.model.EruptJob;
 import xyz.erupt.toolkit.notify.DataAction;
 import xyz.erupt.toolkit.notify.NotifyData;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.Resource;
 import java.text.ParseException;
 
 @Service

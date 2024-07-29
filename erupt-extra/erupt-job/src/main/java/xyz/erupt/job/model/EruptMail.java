@@ -19,10 +19,10 @@ import xyz.erupt.core.constant.RegexConst;
 import xyz.erupt.job.model.data_proxy.EruptMailDataProxy;
 import xyz.erupt.jpa.model.BaseModel;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Lob;
-import javax.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Lob;
+import jakarta.persistence.Table;
 import java.util.Date;
 
 /**
@@ -69,7 +69,7 @@ public class EruptMail extends BaseModel {
     private Boolean status;
 
     @Lob
-    @Type(type = "org.hibernate.type.TextType")
+    @Column(columnDefinition = "longtext")
     @EruptField(
             views = @View(title = "内容"),
             edit = @Edit(title = "内容", notNull = true, type = EditType.HTML_EDITOR)

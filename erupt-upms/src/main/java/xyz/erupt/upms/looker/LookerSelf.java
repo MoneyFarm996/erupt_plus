@@ -8,8 +8,8 @@ import xyz.erupt.core.context.MetaContext;
 import xyz.erupt.upms.helper.HyperModelCreatorVo;
 import xyz.erupt.upms.service.EruptUserService;
 
-import javax.annotation.Resource;
-import javax.persistence.MappedSuperclass;
+import jakarta.annotation.Resource;
+import jakarta.persistence.MappedSuperclass;
 import java.util.List;
 
 /**

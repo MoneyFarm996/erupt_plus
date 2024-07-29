@@ -14,10 +14,10 @@ import xyz.erupt.upms.model.log.EruptOperateLog;
 import xyz.erupt.upms.service.EruptContextService;
 import xyz.erupt.upms.util.IpUtil;
 
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-import javax.servlet.http.HttpServletRequest;
-import javax.transaction.Transactional;
+import jakarta.annotation.Resource;
+import jakarta.persistence.EntityManager;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.transaction.Transactional;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Optional;

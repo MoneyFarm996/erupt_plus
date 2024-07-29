@@ -12,7 +12,7 @@ import xyz.erupt.annotation.Erupt;
 import xyz.erupt.annotation.EruptField;
 import xyz.erupt.annotation.sub_erupt.Power;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 /**
  * 用户和候选人的中间表

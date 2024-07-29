@@ -12,7 +12,9 @@ import xyz.erupt.core.util.ReflectUtil;
 import xyz.erupt.core.view.EruptFieldModel;
 import xyz.erupt.core.view.EruptModel;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
+
+import java.lang.reflect.Field;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -84,7 +86,10 @@ public class EruptJpaUtils {
 
     public static String generateEruptJoinHql(EruptModel eruptModel) {
         StringBuffer hql = new StringBuffer();
-        ReflectUtil.findClassAllFields(eruptModel.getClazz(), field -> {
+        List<Field> fields = ReflectUtil.findClassAllFields(eruptModel.getClazz());
+//        System.out.println("eruptModel.getClazz(): " + eruptModel.getClazz());
+        fields.forEach(field -> {
+//            System.out.println("field: " + field);
             if (null != field.getAnnotation(ManyToOne.class) || null != field.getAnnotation(OneToOne.class)) {
                 EruptFieldModel model = eruptModel.getEruptFieldMap().get(field.getName());
                 if (model != null) {
@@ -92,6 +97,7 @@ public class EruptJpaUtils {
                     View[] views = model.getEruptField().views();
                     for (View v : views) {
                         String columnPath = v.column();
+//                        System.out.println("columnPath: " + columnPath);
                         if (columnPath.contains(EruptConst.DOT)) {
                             String path = eruptModel.getEruptName() + EruptConst.DOT + field.getName() + EruptConst.DOT + columnPath.substring(0, columnPath.lastIndexOf(EruptConst.DOT));
                             if (!pathSet.contains(path)) {
@@ -99,12 +105,19 @@ public class EruptJpaUtils {
                                 pathSet.add(path);
                             }
                         } else {
-                            hql.append(LEFT_JOIN).append(eruptModel.getEruptName()).append(EruptConst.DOT).append(field.getName()).append(AS).append(field.getName());
+                            hql.append(LEFT_JOIN)
+                                .append(eruptModel.getEruptName())
+                                .append(EruptConst.DOT)
+                                .append(field.getName())
+                                .append(AS).append(field.getName());
                         }
                     }
                 }
             }
         });
+//        ReflectUtil.findClassAllFields(eruptModel.getClazz(), field -> {
+//
+//        });
         return hql.toString();
     }
 

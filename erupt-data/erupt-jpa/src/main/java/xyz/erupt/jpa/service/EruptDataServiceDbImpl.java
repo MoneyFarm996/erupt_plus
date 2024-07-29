@@ -24,12 +24,12 @@ import xyz.erupt.jpa.dao.EruptJpaDao;
 import xyz.erupt.jpa.dao.EruptJpaUtils;
 import xyz.erupt.jpa.support.JpaSupport;
 
-import javax.annotation.Resource;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-import javax.transaction.Transactional;
+import jakarta.annotation.Resource;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
+import jakarta.transaction.Transactional;
 import java.lang.reflect.Field;
 import java.sql.SQLException;
 import java.util.*;
@@ -196,12 +196,19 @@ public class EruptDataServiceDbImpl implements IEruptDataService {
                 , column.getName()) + " as " + column.getAlias()));
         hql.append("select new map(").append(String.join(", ", columnStrList))
                 .append(") from ").append(eruptModel.getEruptName()).append(" as ").append(eruptModel.getEruptName());
-        ReflectUtil.findClassAllFields(eruptModel.getClazz(), field -> {
+        List<Field> fields  = ReflectUtil.findClassAllFields(eruptModel.getClazz());
+        fields.forEach(field -> {
             if (null != field.getAnnotation(ManyToOne.class) || null != field.getAnnotation(OneToOne.class)) {
                 hql.append(" left outer join ").append(eruptModel.getEruptName()).append(EruptConst.DOT)
                         .append(field.getName()).append(" as ").append(field.getName());
             }
         });
+//        ReflectUtil.findClassAllFields(eruptModel.getClazz(), field -> {
+//            if (null != field.getAnnotation(ManyToOne.class) || null != field.getAnnotation(OneToOne.class)) {
+//                hql.append(" left outer join ").append(eruptModel.getEruptName()).append(EruptConst.DOT)
+//                        .append(field.getName()).append(" as ").append(field.getName());
+//            }
+//        });
         hql.append(" where 1 = 1 ");
         Optional.ofNullable(query.getConditions()).ifPresent(c -> c.forEach(it -> {
             hql.append(EruptJpaUtils.AND).append(it.getKey()).append('=');

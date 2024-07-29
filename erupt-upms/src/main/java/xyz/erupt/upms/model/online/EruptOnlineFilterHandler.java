@@ -8,7 +8,7 @@ import xyz.erupt.core.prop.EruptProp;
 import xyz.erupt.core.view.EruptApiModel;
 import xyz.erupt.upms.constant.SessionKey;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.util.Set;
 
 /**

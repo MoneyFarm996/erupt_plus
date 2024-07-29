@@ -8,14 +8,16 @@ import org.hibernate.integrator.spi.Integrator;
 import org.hibernate.mapping.Column;
 import org.hibernate.mapping.PersistentClass;
 import org.hibernate.mapping.Property;
+import org.hibernate.mapping.Selectable;
 import org.hibernate.service.spi.SessionFactoryServiceRegistry;
 import xyz.erupt.annotation.Erupt;
 import xyz.erupt.annotation.EruptField;
 import xyz.erupt.core.util.ReflectUtil;
 
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+
 import java.lang.reflect.Field;
 import java.util.Iterator;
 import java.util.Optional;
@@ -66,7 +68,9 @@ public class CommentIntegrator implements Integrator {
                 Optional.ofNullable(persistentClass.getIdentifierProperty()).ifPresent(it -> {
                     this.fieldComment(persistentClass, it.getName());
                 });
-                Iterator<Property> iterator = persistentClass.getPropertyIterator();
+//                Iterator<Property> iterator = persistentClass.getPropertyIterator();
+                // 升级到hibernate 5.4.32后，getPropertyIterator方法已经被废弃，改用getPropertyClosure方法
+                Iterator<Property> iterator = persistentClass.getPropertyClosure().iterator();
                 while (iterator.hasNext()) {
                     this.fieldComment(persistentClass, iterator.next().getName());
                 }
@@ -95,10 +99,16 @@ public class CommentIntegrator implements Integrator {
                     comment = eruptField.views()[0].title();
                 }
                 if (StringUtils.isNotBlank(comment)) {
-                    String sqlColumnName = persistentClass.getProperty(columnName).getValue().getColumnIterator().next().getText();
-                    Iterator<Column> columnIterator = persistentClass.getTable().getColumnIterator();
+//                    String sqlColumnName = ((Selectable)persistentClass.getProperty(columnName).getValue().getColumnIterator().next()).getText();
+                    // 升级 hibernate 5.4.32后，getColumnIterator方法已经被废弃，改用getColumnIterator方法
+
+//                    var property = persistentClass.getProperty(columnName).getValue();
+
+                    String sqlColumnName = persistentClass.getProperty(columnName).getValue().getColumns().get(0).getName();
+//                    Iterator<Column> columnIterator = persistentClass.getTable().getColumnIterator();
+                    Iterator<Column> columnIterator = persistentClass.getTable().getColumns().iterator();
                     while (columnIterator.hasNext()) {
-                        Column column = columnIterator.next();
+                        Column column = (Column) columnIterator.next();
                         if (sqlColumnName.equalsIgnoreCase(column.getName())) {
                             column.setComment(comment);
                             break;

@@ -372,7 +372,8 @@ public class EruptUtil {
 
     //清理序列化后对象所产生的默认值（通过json串进行校验）
     public static void clearObjectDefaultValueByJson(Object obj, JsonObject data) {
-        ReflectUtil.findClassAllFields(obj.getClass(), field -> {
+        List<Field> fields = ReflectUtil.findClassAllFields(obj.getClass());
+        fields.forEach(field -> {
             try {
                 field.setAccessible(true);
                 if (null != field.get(obj)) {
@@ -384,6 +385,18 @@ public class EruptUtil {
                 log.error("erupt clear error", e);
             }
         });
+//        ReflectUtil.findClassAllFields(obj.getClass(), field -> {
+//            try {
+//                field.setAccessible(true);
+//                if (null != field.get(obj)) {
+//                    if (!data.has(field.getName())) {
+//                        field.set(obj, null);
+//                    }
+//                }
+//            } catch (IllegalAccessException e) {
+//                log.error("erupt clear error", e);
+//            }
+//        });
     }
 
     /**

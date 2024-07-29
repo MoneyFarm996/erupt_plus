@@ -8,7 +8,7 @@ import xyz.erupt.flow.bean.entity.OaProcessInstance;
 import xyz.erupt.flow.process.listener.*;
 import xyz.erupt.flow.service.*;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 

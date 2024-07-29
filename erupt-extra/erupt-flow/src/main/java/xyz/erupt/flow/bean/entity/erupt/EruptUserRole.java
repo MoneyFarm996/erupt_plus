@@ -3,7 +3,7 @@ package xyz.erupt.flow.bean.entity.erupt;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @IdClass(EruptUserRoleId.class)
