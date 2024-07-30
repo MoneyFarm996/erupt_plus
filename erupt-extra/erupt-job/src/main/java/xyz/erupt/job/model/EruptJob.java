@@ -43,7 +43,36 @@ import jakarta.persistence.UniqueConstraint;
         name = "任务配置",
         dataProxy = EruptJobDataProcess.class,
         drills = @Drill(title = "日志", icon = "fa fa-sliders", link = @Link(linkErupt = EruptJobLog.class, joinColumn = "jobId")),
-        rowOperation = @RowOperation(code = "action", icon = "fa fa-play", title = "执行一次任务", mode = RowOperation.Mode.SINGLE, eruptClass = EruptJobExecDialog.class, operationHandler = EruptJobDataProcess.class)
+        rowOperation = {
+                @RowOperation(
+                        code ="action",
+                        icon = "fa-solid fa-caret-up",
+                        title = "执行一次任务",
+                        mode = RowOperation.Mode.SINGLE,
+                        eruptClass = EruptJobExecDialog.class,
+                        operationHandler = EruptJobDataProcess.class,
+                        operationParam = "action"
+                ),
+                @RowOperation(
+                        code = "resume", icon = "fa fa-play",
+                        title = "运行",
+                        mode = RowOperation.Mode.SINGLE,
+//                        ifExpr = "item.runStatus==false",
+//                        ifExprBehavior = RowOperation.IfExprBehavior.HIDE,
+                        operationHandler = EruptJobDataProcess.class,
+                        operationParam = "resume"
+                ),
+                // 暂停，恢复
+                @RowOperation(
+                        code = "pause", icon = "fa fa-pause",
+                        title = "停止",
+                        mode = RowOperation.Mode.SINGLE,
+//                        ifExpr = "item.runStatus",
+//                        ifExprBehavior = RowOperation.IfExprBehavior.HIDE,
+                        operationHandler = EruptJobDataProcess.class,
+                        operationParam = "pause"
+                )
+        }
 )
 @PreDataProxy(value = RedisNotifyDataProxy.class, params = JobMessageListener.JOB_TOPIC)
 @Entity
@@ -84,7 +113,7 @@ public class EruptJob extends MetaModelUpdateVo {
     @EruptField(
             views = @View(title = "任务状态"),
             edit = @Edit(title = "任务状态", boolType = @BoolType(
-                    trueText = "启用", falseText = "禁用"
+                    trueText = "运行", falseText = "停止"
             ), notNull = true, search = @Search)
     )
     private Boolean status = true;

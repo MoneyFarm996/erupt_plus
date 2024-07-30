@@ -1,5 +1,6 @@
 package xyz.erupt.job.model.data_proxy;
 
+import lombok.extern.slf4j.Slf4j;
 import org.quartz.SchedulerException;
 import org.quartz.impl.triggers.CronTriggerImpl;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,7 @@ import xyz.erupt.jpa.dao.EruptDao;
 
 import jakarta.annotation.Resource;
 import jakarta.persistence.Transient;
+
 import java.text.ParseException;
 import java.util.List;
 
@@ -20,6 +22,7 @@ import java.util.List;
  * @author YuePeng
  * date 2022/9/8 21:59
  */
+@Slf4j
 @Service
 public class EruptJobDataProcess implements DataProxy<EruptJob>, OperationHandler<EruptJob, EruptJobExecDialog> {
 
@@ -74,16 +77,36 @@ public class EruptJobDataProcess implements DataProxy<EruptJob>, OperationHandle
 
     @Override
     public String exec(List<EruptJob> eruptJob, EruptJobExecDialog param, String[] operationParam) {
+        String action = operationParam[0];
         try {
-            for (EruptJob job : eruptJob) {
-                eruptDao.detach(job);
-                job.setHandlerParam(param.getParam());
-                eruptJobService.triggerJob(job);
+            EruptJob curJob = eruptJob.get(0);
+            switch (action) {
+                case "action":
+                    for (EruptJob job : eruptJob) {
+                        eruptDao.detach(job);
+                        job.setHandlerParam(param.getParam());
+                        eruptJobService.triggerJob(job);
+                    }
+                    break;
+                case "pause":
+                    curJob.setStatus(false);
+                    eruptDao.mergeAndFlush(curJob);
+                    eruptJobService.shutdown(curJob);
+                    break;
+                case "resume":
+                    curJob.setStatus(true);
+                    eruptDao.mergeAndFlush(curJob);
+                    eruptJobService.deleteJob(curJob);
+                    eruptJobService.addJob(curJob);
+                    break;
+                default:
+                    return null;
             }
-            return null;
         } catch (Exception e) {
-            throw new EruptWebApiRuntimeException(e.getMessage(), e);
+            log.error("EruptJobDataProcess exec error", e);
+            return "msg.error('" + e.getMessage() + "')";
         }
+        return null;
     }
 
     @Override

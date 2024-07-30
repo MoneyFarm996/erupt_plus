@@ -86,7 +86,7 @@ public class ProcessExecutionServiceImpl extends ServiceImpl<OaProcessExecutionM
     @Transactional(rollbackFor = Exception.class)
     public void step(Long executionId, OaProcessNode currentNode) {
         //判断是否满足继续的条件
-        int count = this.countRunningChildren(executionId);
+        long count = this.countRunningChildren(executionId);
         if(count>0) {
             //如果还有运行中的子线程，禁止前进
             return;
@@ -111,7 +111,7 @@ public class ProcessExecutionServiceImpl extends ServiceImpl<OaProcessExecutionM
         }
     }
 
-    private int countRunningChildren(Long parentId) {
+    private long countRunningChildren(Long parentId) {
         QueryWrapper<OaProcessExecution> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda().eq(OaProcessExecution::getParentId, parentId);
         //运行中和等待中的任务都算
@@ -193,7 +193,7 @@ public class ProcessExecutionServiceImpl extends ServiceImpl<OaProcessExecutionM
     @Transactional(rollbackFor = Exception.class)
     public void active(Long executionId) {
         //否则判断是否满足继续的条件
-        int count = this.countRunningChildren(executionId);
+        long count = this.countRunningChildren(executionId);
         if(count>0) {
             //当前线程还有子线程未合并，不能继续
             return;

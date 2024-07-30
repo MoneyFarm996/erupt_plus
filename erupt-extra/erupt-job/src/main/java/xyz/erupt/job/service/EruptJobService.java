@@ -57,6 +57,12 @@ public class EruptJobService implements DisposableBean {
         new EruptJobAction().trigger(eruptJob, javaMailSender);
     }
 
+    /**
+     * 添加任务
+     * @param eruptJob 任务
+     * @throws SchedulerException 异常
+     * @throws ParseException 异常
+     */
     public synchronized void addJob(EruptJob eruptJob) throws SchedulerException, ParseException {
         String code = eruptJob.getCode();
         if (!schedulerFactoryMap.containsKey(code)) {
@@ -83,6 +89,58 @@ public class EruptJobService implements DisposableBean {
         }
     }
 
+    /**
+     * 关闭任务
+     * @param eruptJob 任务
+     */
+    public void shutdown(EruptJob eruptJob) throws SchedulerException {
+        String code = eruptJob.getCode();
+        if (schedulerFactoryMap.containsKey(code)) {
+            EruptJobStdSchedulerFactory sf = schedulerFactoryMap.get(code);
+            if (null != sf) {
+                Scheduler scheduler = sf.getStdSchedulerFactory().getScheduler();
+                if (!scheduler.isShutdown()) scheduler.shutdown();
+                schedulerFactoryMap.remove(code);
+            }
+        }
+    }
+
+    /**
+     * 暂停任务
+     * @param eruptJob 任务
+     * @throws SchedulerException 异常
+     */
+    public synchronized void pauseJob(EruptJob eruptJob) throws SchedulerException {
+        EruptJobStdSchedulerFactory sf = schedulerFactoryMap.get(eruptJob.getCode());
+        if (null != sf) {
+            eruptJob.setStatus(false);
+            eruptDao.mergeAndFlush(eruptJob);
+            Scheduler scheduler = sf.getStdSchedulerFactory().getScheduler();
+            scheduler.pauseJob(new JobKey(eruptJob.getCode()));
+        }
+    }
+
+    /**
+     * 恢复任务
+     * @param eruptJob 任务
+     * @throws SchedulerException 异常
+     */
+    public synchronized void resumeJob(EruptJob eruptJob) throws SchedulerException {
+        EruptJobStdSchedulerFactory sf = schedulerFactoryMap.get(eruptJob.getCode());
+        if (null != sf) {
+            eruptJob.setStatus(true);
+            eruptDao.mergeAndFlush(eruptJob);
+            Scheduler scheduler = sf.getStdSchedulerFactory().getScheduler();
+            scheduler.resumeJob(new JobKey(eruptJob.getCode()));
+        }
+    }
+
+    /**
+     * 修改任务
+     * @param eruptJob
+     * @throws SchedulerException
+     * @throws ParseException
+     */
     public synchronized void modifyJob(EruptJob eruptJob) throws SchedulerException, ParseException {
         if (schedulerFactoryMap.containsKey(eruptJob.getCode())) {
             if (eruptJob.equals(schedulerFactoryMap.get(eruptJob.getCode()).getEruptJob())) {
